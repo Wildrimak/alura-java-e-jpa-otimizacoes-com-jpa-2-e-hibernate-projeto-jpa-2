@@ -97,4 +97,8 @@ public class Produto {
 		return loja;
 	}
 
+	public List<Categoria> getCategorias() {
+		return categorias;
+	}
+
 }

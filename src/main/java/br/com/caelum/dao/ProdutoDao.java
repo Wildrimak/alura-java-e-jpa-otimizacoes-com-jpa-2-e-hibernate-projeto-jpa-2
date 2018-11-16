@@ -24,7 +24,8 @@ public class ProdutoDao {
 	private EntityManager em;
 
 	public List<Produto> getProdutos() {
-		return em.createQuery("from Produto", Produto.class).getResultList();
+		return em.createQuery("select distinct p from Produto p join fetch p.categorias", Produto.class)
+				.getResultList();
 	}
 
 	public Produto getProduto(Integer id) {
@@ -35,12 +36,13 @@ public class ProdutoDao {
 	public List<Produto> getProdutos(String nome, Integer categoriaId, Integer lojaId) {
 		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Produto> query = criteriaBuilder.createQuery(Produto.class);
-		
+
 		// CriteriaQuery<Produto> query = criteriaBuilder.createQuery(Produto.class);
 		// query = em.getCriteriaBuilder().createQuery(Produto.class);
-		// Root<Produto root = em.getCriteriaBuilder().createQuery(Produto.class).from(Produto.class);
+		// Root<Produto root =
+		// em.getCriteriaBuilder().createQuery(Produto.class).from(Produto.class);
 		Root<Produto> root = query.from(Produto.class);
-		
+
 		Path<String> nomePath = root.<String>get("nome");
 		Path<Integer> lojaPath = root.<Loja>get("loja").<Integer>get("id");
 		Path<Integer> categoriaPath = root.join("categorias").<Integer>get("id");
@@ -63,7 +65,7 @@ public class ProdutoDao {
 		query.where((Predicate[]) predicates.toArray(new Predicate[0]));
 
 		TypedQuery<Produto> typedQuery = em.createQuery(query);
-		//System.out.println("\n\n\n\n\n" + typedQuery + "\n\n\n\n\n");
+		// System.out.println("\n\n\n\n\n" + typedQuery + "\n\n\n\n\n");
 
 		return typedQuery.getResultList();
 
