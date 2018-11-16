@@ -35,16 +35,20 @@ public class ProdutoDao {
 	public List<Produto> getProdutos(String nome, Integer categoriaId, Integer lojaId) {
 		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Produto> query = criteriaBuilder.createQuery(Produto.class);
+		
+		// CriteriaQuery<Produto> query = criteriaBuilder.createQuery(Produto.class);
+		// query = em.getCriteriaBuilder().createQuery(Produto.class);
+		// Root<Produto root = em.getCriteriaBuilder().createQuery(Produto.class).from(Produto.class);
 		Root<Produto> root = query.from(Produto.class);
-
-		Path<String> nomePath = root.<String> get("nome");
-		Path<Integer> lojaPath = root.<Loja> get("loja").<Integer> get("id");
-		Path<Integer> categoriaPath = root.join("categorias").<Integer> get("id");
+		
+		Path<String> nomePath = root.<String>get("nome");
+		Path<Integer> lojaPath = root.<Loja>get("loja").<Integer>get("id");
+		Path<Integer> categoriaPath = root.join("categorias").<Integer>get("id");
 
 		List<Predicate> predicates = new ArrayList<>();
 
 		if (!nome.isEmpty()) {
-			Predicate nomeIgual = criteriaBuilder.like(nomePath, nome);
+			Predicate nomeIgual = criteriaBuilder.like(nomePath, "%" + nome + "%");
 			predicates.add(nomeIgual);
 		}
 		if (categoriaId != null) {
@@ -59,6 +63,8 @@ public class ProdutoDao {
 		query.where((Predicate[]) predicates.toArray(new Predicate[0]));
 
 		TypedQuery<Produto> typedQuery = em.createQuery(query);
+		//System.out.println("\n\n\n\n\n" + typedQuery + "\n\n\n\n\n");
+
 		return typedQuery.getResultList();
 
 	}
