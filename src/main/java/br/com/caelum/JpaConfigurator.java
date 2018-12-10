@@ -20,7 +20,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 public class JpaConfigurator {
 	
 	@Bean(destroyMethod = "close")
-	public DataSource getDataSource() throws PropertyVetoException {
+	public ComboPooledDataSource getDataSource() throws PropertyVetoException {
 	    ComboPooledDataSource dataSource = new ComboPooledDataSource();
 
 	    dataSource.setDriverClass("com.mysql.jdbc.Driver");    
