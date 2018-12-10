@@ -1,5 +1,6 @@
 package br.com.caelum;
 
+import java.beans.PropertyVetoException;
 import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
@@ -7,25 +8,30 @@ import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+
 @Configuration
 @EnableTransactionManagement
 public class JpaConfigurator {
+	
+	@Bean(destroyMethod = "close")
+	public DataSource getDataSource() throws PropertyVetoException {
+	    ComboPooledDataSource dataSource = new ComboPooledDataSource();
 
-	@Bean
-	public DataSource getDataSource() {
-	    DriverManagerDataSource dataSource = new DriverManagerDataSource();
-
-	    dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-	    dataSource.setUrl("jdbc:mysql://localhost/projeto_jpa");
-	    dataSource.setUsername("wildrimak");
+	    dataSource.setDriverClass("com.mysql.jdbc.Driver");    
+	    dataSource.setJdbcUrl("jdbc:mysql://localhost/projeto_jpa");
+	    dataSource.setUser("wildrimak");
 	    dataSource.setPassword("password");
 
+	    dataSource.setMinPoolSize(3);
+	    dataSource.setMaxPoolSize(5);
+	    dataSource.setIdleConnectionTestPeriod(1);
+	    
 	    return dataSource;
 	}
 
